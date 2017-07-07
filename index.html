@@ -53,11 +53,30 @@ d3.json("https://raw.githubusercontent.com/Mognar/hexjsonmaybe/master/tst.hexjso
 		
 
 	// Render the hexes
+	var grid = d3.getGridForHexJSON(hexjson);
+	var gridHexes = d3.renderHexJSON(grid, width, height);
 	var hexes = d3.renderHexJSON(hexjson, width, height);
+
+	var hexgrid = svg
+		.selectAll("g.grid")
+		.data(gridHexes)
+		.enter()
+		.append("g")
+		.attr("transform", function(hex) {
+			return "translate(" + hex.x + "," + hex.y + ")";
+		});
+
+	// Draw the polygons around each grid hex's centre
+	hexgrid
+		.append("polygon")
+		.attr("points", function(hex) {return hex.points;})
+		.attr("stroke", "#b0b0b0")
+		.attr("stroke-width", "1")
+		.attr("fill", "#f0f0f0");
 
 	// Bind the hexes to g elements of the svg and position them
 	var hexmap = svg
-		.selectAll("g")
+		.selectAll("g.data")
 		.data(hexes)
 		.enter()
 		.append("g")
