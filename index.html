@@ -1,0 +1,117 @@
+<html>
+<head>
+<style>
+#vis {
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	font-family: sans-serif;
+	font-size: 8pt;
+}
+div.tooltip {
+    position: absolute;			
+    text-align: center;								
+    padding: 2px;				
+    font: 14px sans-serif;
+    display: table;		
+    background-color: lightsteelblue;	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;			
+}
+</style>
+</head>
+<body>
+<div id="vis"></div>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="d3-hexjson.js"></script>
+<script>
+
+
+
+
+d3.json("https://raw.githubusercontent.com/Mognar/hexjsonmaybe/master/tst.hexjson", function(error, hexjson) {
+
+	var div = d3.select("body").append("div")	
+    	.attr("class", "tooltip")				
+    	.style("opacity", 0);
+
+
+	// Set the size and margins of the svg
+	var margin = {top: 10, right: 10, bottom: 10, left: 10},
+		width = 700 - margin.left - margin.right,
+		height = 920 - margin.top - margin.bottom;
+
+	// Create the svg element
+	var svg = d3
+		.select("#vis")
+		.append("svg")
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+		.append("g")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		
+
+	// Render the hexes
+	var hexes = d3.renderHexJSON(hexjson, width, height);
+
+	// Bind the hexes to g elements of the svg and position them
+	var hexmap = svg
+		.selectAll("g")
+		.data(hexes)
+		.enter()
+		.append("g")
+		.attr("transform", function(hex) {
+			return "translate(" + hex.x + "," + hex.y + ")";
+		});
+		
+
+
+	//get the range of divisions in the data to create a color scale
+	
+	
+	var color = d3.scaleSequential()
+                     .domain([0, 4])
+                     .interpolator(d3.interpolateWarm);
+
+	// Draw the polygons around each hex's centre
+	hexmap
+		.append("polygon")
+		.attr("points", function(hex) {return hex.points;})
+		.attr("stroke", "white")
+		.attr("stroke-width", "2")
+		//.attr("fill", "#b0e8f0");
+		.style("fill", function(d) { return color(d.Divs);
+			});
+
+
+	// Add the hex codes as labels
+	hexmap
+		.append("text")
+		.append("tspan")
+		.attr("text-anchor", "middle")
+		.text(function(hex) {return hex.Divs;});
+
+
+	hexmap	
+		.on("mouseover", function(d) {		
+            div.transition()		
+                .duration(200)		
+                .style("opacity", .9);		
+            div	.html((d.Divs) + " divisions voted in" + "<br/>"  + d.MP + ", " + d.n + ", " + d.Party)	
+                .style("left", (d3.event.pageX) + "px")
+         	.style("top", (d3.event.pageY - 28) + "px");
+            })	
+		.on("mouseout", function(d) {
+       div.transition()
+         .duration(500)
+         .style("opacity", 0);
+       });				
+
+
+
+});
+
+</script>
+</body>
+</html>
