@@ -40,7 +40,9 @@ d3.json("https://raw.githubusercontent.com/Mognar/hexjsonmaybe/master/tst.hexjso
 	// Set the size and margins of the svg
 	var margin = {top: 10, right: 10, bottom: 10, left: 10},
 		width = 700 - margin.left - margin.right,
-		height = 920 - margin.top - margin.bottom;
+		height = 920 - margin.top - margin.bottom,
+		viewBox="0 0 700 920",
+  		preserveAspectRatio="xMidYMid meet";
 
 	// Create the svg element
 	var svg = d3
