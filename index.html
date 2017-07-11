@@ -179,7 +179,8 @@ hexmax = d3.max(hexarray);
 				return "Eleanor Laing is Deputy Speaker, therefore does not take part in divisions";
 				}	
 			else {	
-            			return (d.Divs) + " divisions voted in" + "<br/>"  + d.MP + ", " + d.n + ", " + d.Party;
+            			//return (d.Divs) + " divisions voted in" + "<br/>"  + d.MP + ", " + d.n + ", " + d.Party;
+				return "d.MP" + ", MP for " + d.n + ", " + d.Party + ", voted in " + d.Divs + " divisions"
 				}
 			})
                 .style("left", (d3.event.pageX) + "px")
