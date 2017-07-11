@@ -8,7 +8,7 @@
     height:100%;
     float:right;
 	display:block;
-	font: 12px sans-serif;
+	font: 10px sans-serif;
   }
 
 #left_column {
@@ -32,4 +32,8 @@ div.tooltip {
 svg {
 	width: 100%;
 	height: 100%;
+}
+polygon:hover, polygon.highlighted {
+  stroke: orange;
+  stroke-width: 4;
 }
