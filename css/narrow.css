@@ -1,0 +1,35 @@
+@media screen and (max-width: 500px) {
+    body {
+	width:100%;
+        background-color: #447a1c;
+    }
+
+#vis {
+    width:100%;
+  vertical-align:bottom;
+	font: 12px sans-serif;
+  }
+
+#left_column {
+    width: 150%;
+  vertical-align:top;
+	font: 14px sans-serif;
+	color:lightgrey;
+  }
+div.tooltip {
+    position: absolute;			
+    text-align: center;
+    width:40px;								
+    padding: 2px;				
+    font: 12px sans-serif;
+    display: table;		
+    background-color: lightsteelblue;	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;			
+}
+svg {
+	width: auto;
+	height: auto;
+}
+}
