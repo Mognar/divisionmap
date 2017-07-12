@@ -1,7 +1,7 @@
 @media screen and (max-width: 500px) {
     body {
 	width:100%;
-        background-color: #447a1c;
+        background-color: #edeff2;
     }
 
 #vis {
@@ -17,7 +17,7 @@ text-align:center;
     width: 150%;
   vertical-align:top;
 	font: 14px sans-serif;
-	color:lightgrey;
+	color:darkslategrey;
   }
 div.tooltip {
     position: absolute;			
