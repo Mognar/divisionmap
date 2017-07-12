@@ -118,7 +118,7 @@ hexmax = d3.max(hexarray);
 	
 	var color = d3.scaleSequential()
                      .domain([0, hexmax])
-                     .interpolator(d3.interpolatePlasma);
+                     .interpolator(d3.interpolateOrRd);
 
 	// Draw the polygons around each hex's centre
 	hexmap
