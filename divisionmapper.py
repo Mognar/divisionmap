@@ -1,4 +1,4 @@
-
+#code created in ipython notebook. Credit to Tony Hirst for most of the bones of this python program. 
 # coding: utf-8
 
 # In[17]:
@@ -65,7 +65,6 @@ items[0]
 rem =[]
 rel =[]
 rep =[]
-#rez = (rel,rep)
 for i in items:
     votes = i['vote']
     for m in votes: 
@@ -104,18 +103,15 @@ pd.set_option('display.max_columns', 5400)
 
 # In[26]:
 
-#df=pd.DataFrame(rel,rep)
+#
 data_frame = pd.DataFrame(rel)
 data_frame[1] = pd.Series(rem)
 data_frame[2] = pd.Series(rep)
-#dm=pd.DataFrame(rep)
-#dfg=pd.concat([df, dm], axis=1)
 dfc=data_frame.groupby([rel,rem,rep]).count().reset_index()
 dfc.columns=['Constituency','MP','Party','Divs','2','3']#,'No. of divisions','yes']
 dfs=dfc.sort_values(by='MP', ascending=0)
 dffinal = dfs[['Constituency','MP','Party','Divs']]#,'No. of divisions']]
-#dfr=dfs.head(n=100)
-#dffinal=dfz.to_string
+
 
 
 # In[27]:
