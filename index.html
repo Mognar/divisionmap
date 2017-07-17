@@ -183,7 +183,13 @@ document.getElementById("demo").innerHTML = hexmax;
 				}
 			else if (d.n == "Epping Forest"){
 				return "Eleanor Laing is Deputy Speaker, therefore does not take part in divisions";
-				}	
+				}
+			else if (d.n == "Knowsley"){
+				return "George Howarth, MP for Knowsley, Labour, voted in 0 divisions";
+				}
+			else if (d.n == "Burton"){
+				return "Andrew Griffiths, MP for Burton, Conservative, voted in 0 divisions";
+				}
 			else {	
             			//return (d.Divs) + " divisions voted in" + "<br/>"  + d.MP + ", " + d.n + ", " + d.Party;
 				return d.MP + ", MP for " + d.n + ", " + d.Party + ", voted in " + d.Divs + " divisions";
