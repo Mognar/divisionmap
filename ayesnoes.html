@@ -1,0 +1,210 @@
+<html>
+<head>
+
+	<meta name="viewport" content="width=device-width">
+
+	<meta charset="UTF-8">
+	
+	
+	<link rel="stylesheet" media="screen and (max-width: 500px)" href="css/narrow.css">
+	<link rel="stylesheet" media="screen and (min-width: 501px)" href="css/wide.css">
+</head>
+<body>
+<div id="left_column">
+<h2 id="header">Divisions in the Commons: 2017 Parliament</h2>
+<p>Divisions are used for counting those in favour or against a motion when there is a vote in the House of Commons or the House of Lords. The House literally divides, with members choosing to file through one of two lobbies on either side of the Chamber where they are counted and their names recorded.<br/><br/>
+Hover mouse over each constituency hexagon to see the name of the constituency, the MP, the party they belong to and the number of divisions voted in. <br/><br/>
+	The colours of hexagons correspond to the number of divisions voted in by the MP/s for that constituency - the lighter the colour, the more divisions the Member has voted in. <br/><br/>
+    Black hexagons indicate constituencies where the MP has not voted in any divisions. <br/><br/>
+	To find out more about divisions in the Commons, <a href="http://researchbriefings.parliament.uk/ResearchBriefing/Summary/SN06401">this background paper</a> from the <a href="https://www.twitter.com/commonslibrary">Commons Library</a> is a great primer on the subject<br/><br/>
+This is a personal project, made in my own time. If you have any questions or feedback about this map, please let me know at <a href="https://www.twitter.com/philbgorman">@philbgorman</a><br/><br/>
+	Scale: <img src="https://raw.githubusercontent.com/d3/d3-scale-chromatic/master/img/plasma.png" width="100%" height="30" alt="plasma" style="max-width:100%;">
+	<p style="text-align:left;"><span id="demo2" style="float:left"></span>
+
+<span id="demo" style="float:right"></span></p></div>
+<div id="vis">
+</div>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
+<script src="d3-hexjson.js"></script>
+<script>
+
+
+
+
+d3.json("https://raw.githubusercontent.com/Mognar/divisionmap/master/txt446.hexjson", function(error, hexjson) {
+
+	var div = d3.select("body").append("div")	
+    	.attr("class", "tooltip")				
+    	.style("opacity", 0);
+
+var hexy = hexjson.hexes
+
+var hexarray = []
+
+Object.keys(hexy); // ['foo', 'baz']
+Object.keys(hexy).map(function(key){ return hexy[key] }) // ['bar', 'quux']
+Object.keys(hexy).forEach(function (key) {
+ props = hexy[key].Divs;
+	if (props != null){
+		props2 = props;
+  hexarray.push(props2);
+}
+//console.log(props2);
+
+
+//console.log(d3.max(props2));
+
+});
+
+//console.log(hexarray);
+hexmax = d3.max(hexarray);
+hexmin = d3.min(hexarray);
+
+document.getElementById("demo").innerHTML = hexmax;
+document.getElementById("demo2").innerHTML = hexmin;
+
+
+	// Set the size and margins of the svg
+	var margin = {top: 10, right: 10, bottom: 10, left: 10},
+		width = 600,
+		height = 720;
+
+	// Create the svg element
+	var svg = d3
+		.select("#vis")
+		.classed("svg-container", true)
+		.append("svg")
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+ 		//.style("width", width1)
+  		//.style("height", height1)
+		.attr("preserveAspectRatio", "xMinYMin meet")
+   		.attr("viewBox", "0 0 600 800")
+   		//class to make it responsive
+   		.classed("svg-content-responsive", true) 
+		.append("g")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		
+
+	// Render the hexes
+	var grid = d3.getGridForHexJSON(hexjson);
+	var gridHexes = d3.renderHexJSON(grid, width, height);
+	var hexes = d3.renderHexJSON(hexjson, width, height);
+
+	var hexgrid = svg
+		.selectAll("g.grid")
+		.data(gridHexes)
+		.enter()
+		.append("g")
+		.attr("transform", function(hex) {
+			return "translate(" + hex.x + "," + hex.y + ")";
+		});
+
+	// Draw the polygons around each grid hex's centre
+	hexgrid
+		.append("polygon")
+		.attr("points", function(hex) {return hex.points;})
+		.attr("stroke", "#b0b0b0")
+		.attr("stroke-width", "1")
+		.attr("fill", "#add8e6");
+
+	// Bind the hexes to g elements of the svg and position them
+	var hexmap = svg
+		.selectAll("g.data")
+		.data(hexes)
+		.enter()
+		.append("g")
+		.attr("transform", function(hex) {
+			return "translate(" + hex.x + "," + hex.y + ")";
+		});
+		
+
+
+	//get the range of divisions in the data to create a color scale
+	
+	
+	var color = d3.scaleSequential()
+                     .domain([0, hexmax])
+                     .interpolator(d3.interpolatePlasma);
+
+	// Draw the polygons around each hex's centre
+	hexmap
+		.append("polygon")
+		.attr("points", function(hex) {return hex.points;})
+		.attr("stroke", "white")
+		.attr("stroke-width", "2")
+		//.attr("fill", "#b0e8f0");
+		.style("fill", function(d) { return color(d.Divs);
+			});
+
+
+	// Add the hex codes as labels
+	hexmap
+		.append("text")
+		.append("tspan")
+		.attr("text-anchor", "middle")
+		.attr("alignment-baseline","central")
+		.text(function(hex) {return hex.Divs;});
+
+
+	hexmap	
+		.on("mouseover", function(d) {		
+            div.transition()		
+                .duration(200)		
+                .style("opacity", .9);
+		div.html (function(){
+			if (d.n == "Buckingham"){
+				return "Speaker Bercow does not take part in Divisions";
+				}
+			else if (d.n == "Newry and Armagh"){
+				return "Mickey Brady is a Sinn Fein MP, they do not take part in divisions";
+				}
+			else if (d.n == "Mid Ulster"){
+				return "Francie Molloy is a Sinn Fein MP, they do not take part in divisions";
+				}
+			else if (d.n == "South Down"){
+				return "Chris Hazzard is a Sinn Fein MP, they do not take part in divisions";
+				}
+			else if (d.n == "Belfast West"){
+				return "Paul Maskey is a Sinn Fein MP, they do not take part in divisions";
+				}
+			else if (d.n == "Fermanagh and South Tyrone"){
+				return "Michelle Gildernew is a Sinn Fein MP, they do not take part in divisions";
+				}
+			else if (d.n == "Foyle"){
+				return "Elisha McCallion is a Sinn Fein MP, they do not take part in divisions";
+				}
+			else if (d.n == "West Tyrone"){
+				return "Barry McElduff/Orflaith Begley is a Sinn Fein MP, they do not take part in divisions";
+				}
+			else if (d.n == "Chorley"){
+				return "Lindsay Hoyle is Deputy Speaker, therefore does not take part in divisions";
+				}
+			else if (d.n == "Doncaster Central"){
+				return "Dame Rosie Winterton is Deputy Speaker, therefore does not take part in divisions";
+				}
+			else if (d.n == "Epping Forest"){
+				return "Eleanor Laing is Deputy Speaker, therefore does not take part in divisions";
+				}
+			else {	
+            			//return (d.Divs) + " divisions voted in" + "<br/>"  + d.MP + ", " + d.n + ", " + d.Party;
+				return d.MP + ", MP for " + d.n + ", " + d.Party;
+				}
+			})
+                .style("left", (d3.event.pageX) + "px")
+         	.style("top", (d3.event.pageY) + "px");
+            })	
+		.on("mouseout", function(d) {
+       div.transition()
+         .duration(500)
+         .style("opacity", 0);
+       });				
+
+
+
+});
+
+</script>
+</body>
+</html>
