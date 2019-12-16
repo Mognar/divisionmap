@@ -83,7 +83,7 @@ document.getElementById("demo2").innerHTML = "Smallest majority: " + hexmin;*/
 		.attr("points", function(hex) {return hex.points;})
 		.attr("stroke", "#ffffff")
 		.attr("stroke-width", "1")
-		.attr("fill", "#add8e6");
+		.attr("fill", "#ffffff");
 	// Bind the hexes to g elements of the svg and position them
 	var hexmap = svg
 		.selectAll("g.data")
@@ -98,31 +98,31 @@ document.getElementById("demo2").innerHTML = "Smallest majority: " + hexmin;*/
 
 
 	var colorLab = d3.scaleSequential()
-                     .domain([0, hexmax *1.2])
+                     .domain([hexmin, hexmax])
                      .interpolator(d3.interpolateReds)
         var colorCon = d3.scaleSequential()
-                     .domain([0, hexmax*1.2])
+                     .domain([hexmin, hexmax])
                      .interpolator(d3.interpolateBlues)
         var colorLib = d3.scaleSequential()
-                     .domain([hexmin, hexmax*1.2])
+                     .domain([hexmin, hexmax])
                      .interpolator(d3.interpolateOranges)
         var colorSNP = d3.scaleSequential()
-                     .domain([hexmin, hexmax*3])
+                     .domain([hexmin, hexmax])
                      .interpolator(d3.interpolateYlOrBr)
         var colorGrn = d3.scaleSequential()
-                     .domain([0, hexmax*1.2])
+                     .domain([hexmin, hexmax])
                      .interpolator(d3.interpolateGreens)
 			 var colorSF = d3.scaleSequential()
-                    .domain([0, hexmax*1.2])
+                    .domain([hexmin, hexmax])
                     .interpolator(d3.interpolateYlGn)
         var colorDUP = d3.scaleSequential()
-                     .domain([0, hexmax*1.2])
+                     .domain([hexmin, hexmax])
                      .interpolator(d3.interpolatePurples)
         var colorPld = d3.scaleSequential()
-                     .domain([0, hexmax*1.2])
+                     .domain([hexmin, hexmax])
                      .interpolator(d3.interpolateBuGn)
 				var colorInd = d3.scaleSequential()
-                     .domain([0, hexmax*1.2])
+                     .domain([hexmin, hexmax])
                      .interpolator(d3.interpolateGreys)
 
 
@@ -136,7 +136,7 @@ document.getElementById("demo2").innerHTML = "Smallest majority: " + hexmin;*/
 		//.attr("fill", "#b0e8f0");
 		/*.style("fill", function(d) {return colorGrn(d.Val_Diff);});*/
 		.style("fill", function(d) {
-				if ((d.stpartyname == "Labour") || (d.stpartyname == "Labour (Co-op)") || (d.stpartyname == "Social Democratic & Labour Party")){
+				if ((d.stpartyname == "Labour") || (d.stpartyname == "Labour (Co-op)") ||(d.stpartyname == "Democratic Unionist Party")){
 					return colorLab(d.Val_Diff);
 				}
 				else if (d.stpartyname == "Conservative"){
@@ -148,16 +148,16 @@ document.getElementById("demo2").innerHTML = "Smallest majority: " + hexmin;*/
 				else if (d.stpartyname == "Scottish National Party"){
 					return colorSNP(d.Val_Diff);
 				}
-				else if (d.stpartyname == "Green"){
+				else if ((d.stpartyname == "Green") ||  (d.stpartyname == "Sinn Fein")){
 					return colorGrn(d.Val_Diff);
 				}
 				else if (d.stpartyname == "Plaid Cymru"){
 					return colorPld(d.Val_Diff);
 				}
-				else if (d.stpartyname == "Democratic Unionist Party"){
+				/*else if (d.stpartyname == "Democratic Unionist Party"){
 					return colorDUP(d.Val_Diff);
-				}
-				else if (d.stpartyname == "Sinn Fein"){
+				}*/
+				else if (d.stpartyname == "Social Democratic & Labour Party"){
 					return colorSF(d.Val_Diff);
 				}
 				else  {
