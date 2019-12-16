@@ -1,0 +1,240 @@
+<html>
+<head>
+<title>GE 2019 Majorities</title>
+	<meta name="viewport" content="width=device-width">
+
+	<meta charset="UTF-8">
+
+
+	<link rel="stylesheet" media="screen and (max-width: 500px)" href="narrow.css">
+	<link rel="stylesheet" media="screen and (min-width: 501px)" href="wide.css">
+</head>
+<body>
+<div id="left_column">
+<h2 id="header">How large was the majority for each constituency in the 2019 General Election?</h2>
+<p>Hover over each constituency hexagon to read the majority which the winning received at the 2019 General Election.</p>
+<p>The colour of each constituency corresponds to the winning party. The vibrancy of the colour indicates the size of the majority </p>
+<p>Data was scraped from the BBC News website.</p>
+This is a personal project, made in my own time. If you have any questions or feedback about this map, please let me know at <a href="https://www.twitter.com/philbgorman">@philbgorman</a><br/><br/>
+<!-- <p style="text-align:left;"><span id="demo2" style="float:left"></span><span id="demo" style="float:right"></span></p>--></div>
+<div id="vis">
+</div>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
+<script src="d3-hexjson.js"></script>
+<script>
+d3.json("https://raw.githubusercontent.com/Mognar/ge2019/master/narrow.hexjson", function(error, hexjson) {
+	var div = d3.select("body").append("div")
+    	.attr("class", "tooltip")
+    	.style("opacity", 0);
+var hexy = hexjson.hexes
+var hexarray = []
+Object.keys(hexy); // ['foo', 'baz']
+Object.keys(hexy).map(function(key){ return hexy[key] }) // ['bar', 'quux']
+Object.keys(hexy).forEach(function (key) {
+ props = hexy[key].Val_Diff;
+	if (props != null){
+		props2 = props;
+  hexarray.push(props2);
+}
+//console.log(props2);
+//console.log(d3.max(props2));
+});
+//console.log(hexarray);
+hexmax = d3.max(hexarray);
+hexmin = d3.min(hexarray);
+/*document.getElementById("demo").innerHTML = "Largest majority: " + hexmax;
+document.getElementById("demo2").innerHTML = "Smallest majority: " + hexmin;*/
+	// Set the size and margins of the svg
+	var margin = {top: 10, right: 10, bottom: 10, left: 10},
+		width = 600,
+		height = 720;
+	// Create the svg element
+	var svg = d3
+		.select("#vis")
+		.classed("svg-container", true)
+		.append("svg")
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+ 		//.style("width", width1)
+  		//.style("height", height1)
+		.attr("preserveAspectRatio", "xMinYMin meet")
+   		.attr("viewBox", "0 0 600 800")
+   		//class to make it responsive
+   		.classed("svg-content-responsive", true)
+		.append("g")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+	// Render the hexes
+	var grid = d3.getGridForHexJSON(hexjson);
+	var gridHexes = d3.renderHexJSON(grid, width, height);
+	var hexes = d3.renderHexJSON(hexjson, width, height);
+	var hexgrid = svg
+		.selectAll("g.grid")
+		.data(gridHexes)
+		.enter()
+		.append("g")
+		.attr("transform", function(hex) {
+			return "translate(" + hex.x + "," + hex.y + ")";
+		});
+	// Draw the polygons around each grid hex's centre
+	hexgrid
+		.append("polygon")
+		.attr("points", function(hex) {return hex.points;})
+		.attr("stroke", "#b0b0b0")
+		.attr("stroke-width", "1")
+		.attr("fill", "#add8e6");
+	// Bind the hexes to g elements of the svg and position them
+	var hexmap = svg
+		.selectAll("g.data")
+		.data(hexes)
+		.enter()
+		.append("g")
+		.attr("transform", function(hex) {
+			return "translate(" + hex.x + "," + hex.y + ")";
+		});
+
+	//get the range of divisions in the data to create a color scale
+
+
+	var colorLab = d3.scaleSequential()
+                     .domain([0, hexmax *1.2])
+                     .interpolator(d3.interpolateReds)
+        var colorCon = d3.scaleSequential()
+                     .domain([0, hexmax*1.2])
+                     .interpolator(d3.interpolateBlues)
+        var colorLib = d3.scaleSequential()
+                     .domain([hexmin, hexmax*1.2])
+                     .interpolator(d3.interpolateOranges)
+        var colorSNP = d3.scaleSequential()
+                     .domain([hexmin, hexmax*3])
+                     .interpolator(d3.interpolateYlOrBr)
+        var colorGrn = d3.scaleSequential()
+                     .domain([0, hexmax*1.2])
+                     .interpolator(d3.interpolateGreens)
+			 var colorSF = d3.scaleSequential()
+                    .domain([0, hexmax*1.2])
+                    .interpolator(d3.interpolateYlGn)
+        var colorDUP = d3.scaleSequential()
+                     .domain([0, hexmax*1.2])
+                     .interpolator(d3.interpolatePurples)
+        var colorPld = d3.scaleSequential()
+                     .domain([0, hexmax*1.2])
+                     .interpolator(d3.interpolateBuGn)
+				var colorInd = d3.scaleSequential()
+                     .domain([0, hexmax*1.2])
+                     .interpolator(d3.interpolateGreys)
+
+
+
+	// Draw the polygons around each hex's centre
+	hexmap
+		.append("polygon")
+		.attr("points", function(hex) {return hex.points;})
+		.attr("stroke", "white")
+		.attr("stroke-width", "1.5")
+		//.attr("fill", "#b0e8f0");
+		/*.style("fill", function(d) {return colorGrn(d.Val_Diff);});*/
+		.style("fill", function(d) {
+				if ((d.stpartyname == "Labour") || (d.stpartyname == "Labour (Co-op)") || (d.stpartyname == "Social Democratic & Labour Party")){
+					return colorLab(d.Val_Diff);
+				}
+				else if (d.stpartyname == "Conservative"){
+					return colorCon(d.Val_Diff);
+				}
+				else if ((d.stpartyname == "Liberal Democrat") || (d.stpartyname == "Alliance")){
+					return colorLib(d.Val_Diff);
+				}
+				else if (d.stpartyname == "Scottish National Party"){
+					return colorSNP(d.Val_Diff);
+				}
+				else if (d.stpartyname == "Green"){
+					return colorGrn(d.Val_Diff);
+				}
+				else if (d.stpartyname == "Plaid Cymru"){
+					return colorPld(d.Val_Diff);
+				}
+				else if (d.stpartyname == "Democratic Unionist Party"){
+					return colorDUP(d.Val_Diff);
+				}
+				else if (d.stpartyname == "Sinn Fein"){
+					return colorSF(d.Val_Diff);
+				}
+				else  {
+				 return colorInd(d.Val_Diff);
+				}
+			});
+
+	// Add the hex codes as labels
+	hexmap
+		.append("text")
+		.append("tspan")
+		.attr("text-anchor", "middle")
+		.attr("alignment-baseline","central")
+		/*.text(function(hex) {return hex.Val_Diff;})*/
+		//.style("fill", "#ffffff")
+		.style("fill", function(d) {
+			if (d.stpartyname == "Scottish National Party"){
+					return "blue";}
+			else if (d.stpartyname == "Liberal Democrat"){
+					return "#000000";}
+			else  {
+				 return "#FFFFFF";
+				}
+				});
+	hexmap
+		.on("mouseover", function(d) {
+            div.transition()
+                .duration(200)
+                .style("opacity", .9);
+		div.html (function(){
+			/*if (d.n == "Buckingham"){
+				return "Speaker Bercow does not take part in Divisions";
+				}
+			else if (d.n == "Newry and Armagh"){
+				return "Mickey Brady is a Sinn Fein MP, they do not take part in divisions";
+				}
+			else if (d.n == "Mid Ulster"){
+				return "Francie Molloy is a Sinn Fein MP, they do not take part in divisions";
+				}
+			else if (d.n == "South Down"){
+				return "Chris Hazzard is a Sinn Fein MP, they do not take part in divisions";
+				}
+			else if (d.n == "Belfast West"){
+				return "Paul Maskey is a Sinn Fein MP, they do not take part in divisions";
+				}
+			else if (d.n == "Fermanagh and South Tyrone"){
+				return "Michelle Gildernew is a Sinn Fein MP, they do not take part in divisions";
+				}
+			else if (d.n == "Foyle"){
+				return "Elisha McCallion is a Sinn Fein MP, they do not take part in divisions";
+				}
+			else if (d.n == "West Tyrone"){
+				return "Barry McElduff is a Sinn Fein MP, they do not take part in divisions";
+				}
+			else if (d.n == "Chorley"){
+				return "Lindsay Hoyle is Deputy Speaker, therefore does not take part in divisions";
+				}
+			else if (d.n == "Doncaster Central"){
+				return "Dame Rosie Winterton is Deputy Speaker, therefore does not take part in divisions";
+				}
+			else if (d.n == "Epping Forest"){
+				return "Eleanor Laing is Deputy Speaker, therefore does not take part in divisions";
+				}
+			else {*/
+            			//return (d.Val_Diff) + " divisions voted in" + "<br/>"  + d.MP + ", " + d.n + ", " + d.1stpartyname;
+				return "In " + d.n + ", " + d.stpartyname + " won by " + d.Val_Diff + " votes </br></br>" +d.stpartyname + ": " + d.stparty + "</br>" +d.ndpartyname + ": " + d.ndparty;
+
+			})
+                .style("left", (d3.event.pageX) + "px")
+         	.style("top", (d3.event.pageY) + "px");
+            })
+		.on("mouseout", function(d) {
+       div.transition()
+         .duration(500)
+         .style("opacity", 0);
+       });
+});
+</script>
+</body>
+</html>
